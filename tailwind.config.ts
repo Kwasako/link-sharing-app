@@ -18,7 +18,28 @@ const config = {
       },
     },
     extend: {
+      fontSize: {
+          '32': '32px',
+          '18': '18px',
+          '16': "16px",
+          '12': '12px'
+        },
+      lineHeight: {
+          '48': '48px',
+        },
+      fontFamily: {
+          'instrument': ['"Instrument Sans"', 'sans-serif'],
+      },
+      
       colors: {
+        'dark-gray':'#333333',
+        'light-gray': '#FAFAFA',
+        'custom-gray': '#737373',
+        'neutral-gray': '#D9D9D9',
+        'dark-purple': '#633cff',
+        'light-purple': '#EFEBFF',
+        'custom-purple': '#BEADFF',
+        'dark-red': '#FF3939',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
