@@ -3,11 +3,21 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { platformsData } from '@/app/data/ui';
 import { FaLink } from 'react-icons/fa';
+import { IconType } from 'react-icons';
 
 type SocialLinkFormProps = {
   initialPlatform?: string;
   initialUrl?: string;
   onUpdate: (platform: string, url: string, isValid: boolean) => void;
+};
+
+type Platform = {
+  id: number;
+  value: string;
+  label: string;
+  icon: IconType;
+  bg: string;
+  placeholder: string;
 };
 
 export default function SocialLinkForm({initialPlatform, initialUrl, onUpdate }: SocialLinkFormProps) {
@@ -108,7 +118,7 @@ export default function SocialLinkForm({initialPlatform, initialUrl, onUpdate }:
     onUpdate(currentPlatform.value, linkInput, !validationError);
   }, [currentPlatform, linkInput, onUpdate]);
 
-  const handlePlatformChange = (platform) => {
+  const handlePlatformChange = (platform :Platform) => {
     setCurrentPlatform(platform);
     setIsOpen(false);
   };
