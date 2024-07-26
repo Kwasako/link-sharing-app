@@ -1,11 +1,10 @@
 "use client"
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import Image from "next/image";
-// import Link from "next/link";
-
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -19,24 +18,69 @@ import {
 import { Input } from "@/components/ui/input"
 import { Link } from "lucide-react";
 
+// Import Firebase
+import { initializeApp } from "firebase/app";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
+
+// Your Firebase configuration
+const firebaseConfig = {
+  // Add your Firebase config here
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  email: z.string().email({
+    message: "Please enter a valid email address.",
   }),
-})
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters.",
+  }),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
 
 export function LoginForm() {
+  const [isLogin, setIsLogin] = useState(false);
+  const [selectedPlatforms, setSelectedPlatforms] = useState([]);
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
   })
 
-  function onSubmit(values) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values) {
+    try {
+      if (isLogin) {
+        // Login
+        await signInWithEmailAndPassword(auth, values.email, values.password);
+        console.log("User logged in successfully");
+      } else {
+        // Register
+        const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+        const user = userCredential.user;
+        
+        // Save user data including selected platforms
+        await setDoc(doc(db, "users", user.uid), {
+          email: values.email,
+          selectedPlatforms: selectedPlatforms,
+        });
+        
+        console.log("User registered successfully");
+      }
+    } catch (error) {
+      console.error("Error:", error.message);
+    }
   }
 
   return (
@@ -44,37 +88,52 @@ export function LoginForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel><p className="font-instrument text-xs font-normal leading-18 text-left text-dark-gray-400">Email address</p></FormLabel>
+              <FormLabel>Email address</FormLabel>
               <FormControl>
-                <div className="w-full h-8 px-4 py-3 flex items-center gap-3 rounded-lg border bg-white border-[rgba(217,217,217,1)]">
-                  <Image src="/ph_envelope-simple-fill.svg" alt="envelop icon" width={16} height={16}/>
-                  <input placeholder="ben@example.com |" {...field} className="leading-16 text-dark-gray-400 w-full"/>
-                </div>
-              </FormControl>
-              <FormLabel><p className="font-instrument text-xs font-normal leading-18 text-left text-dark-gray-400">Create password</p></FormLabel>
-              <FormControl>
-                <div className="w-full h-8 px-4 py-3 flex items-center gap-3 rounded-lg border bg-white border-[rgba(217,217,217,1)]">
-                  <Image src="/ph_envelope-simple-fill.svg" alt="envelop icon" width={16} height={16}/>
-                  <input placeholder="At least .8 characters" {...field} className="leading-16 text-dark-gray-400 w-full"/>
-                </div>
-              </FormControl>
-              <FormLabel><p className="font-instrument text-xs font-normal leading-18 text-left text-dark-gray-400">Confirm password</p></FormLabel>
-              <FormControl>
-                <div className="w-full h-8 px-4 py-3 flex items-center gap-3 rounded-lg border bg-white border-[rgba(217,217,217,1)]">
-                  <Image src="/ph_envelope-simple-fill.svg" alt="envelop icon" width={16} height={16}/>
-                  <input placeholder="At least 8 characters" {...field} className="leading-16 text-custom-gray-400 w-full"/>
-                </div>
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <p className="font-instrument text-xs font-normal leading-12 text-left text-custom-gray">Password must contain at least 8 characters</p>
-        <Button type="submit" className="w-full bg-[rgba(99,60,255,1)]">Submit</Button>
-        <p className="font-instrument text-base font-normal leading-6 text-left text-custom-gray">Already have an account? <a>login</a></p>
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {!isLogin && (
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm password</FormLabel>
+                <FormControl>
+                  <Input type="password" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+        <FormDescription>
+          Password must contain at least 8 characters
+        </FormDescription>
+        <Button type="submit">{isLogin ? "Login" : "Register"}</Button>
+        <Button type="button" onClick={() => setIsLogin(!isLogin)}>
+          {isLogin ? "Need to create an account?" : "Already have an account?"}
+        </Button>
       </form>
     </Form>
   )
