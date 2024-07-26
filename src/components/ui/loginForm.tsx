@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import Image from "next/image";
 import { Button } from "@/components/ui/button"
+import { auth, db } from '@/app/data/firebase';
 import {
   Form,
   FormControl,
@@ -19,19 +20,8 @@ import { Input } from "@/components/ui/input"
 import { Link } from "lucide-react";
 
 // Import Firebase
-import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
-
-// Your Firebase configuration
-const firebaseConfig = {
-  // Add your Firebase config here
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -46,11 +36,22 @@ const formSchema = z.object({
   path: ["confirmPassword"],
 });
 
+type FormValues = z.infer<typeof formSchema>;
+
 export function LoginForm() {
   const [isLogin, setIsLogin] = useState(false);
-  const [selectedPlatforms, setSelectedPlatforms] = useState([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
 
-  const form = useForm({
+  useEffect(() => {
+    if (!auth) {
+      console.error("Auth is not initialized");
+    }
+    if (!db) {
+      console.error("Firestore is not initialized");
+    }
+  }, []);
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
@@ -59,7 +60,7 @@ export function LoginForm() {
     },
   })
 
-  async function onSubmit(values) {
+  async function onSubmit(values: FormValues) {
     try {
       if (isLogin) {
         // Login
@@ -79,7 +80,7 @@ export function LoginForm() {
         console.log("User registered successfully");
       }
     } catch (error) {
-      console.error("Error:", error.message);
+      console.error("Error:", (error as Error).message);
     }
   }
 
