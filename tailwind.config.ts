@@ -36,7 +36,7 @@ const config = {
         'light-gray': '#FAFAFA',
         'custom-gray': '#737373',
         'neutral-gray': '#D9D9D9',
-        'dark-purple': '#633cff',
+        'dark-purple': '#633CFF',
         'light-purple': '#EFEBFF',
         'custom-purple': '#BEADFF',
         'dark-red': '#FF3939',
