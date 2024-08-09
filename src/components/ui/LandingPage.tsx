@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from 'next/navigation';
 import { useLink } from './LinkContext';
 import React, { useState, useEffect } from "react";
 import Image from "next/image"
@@ -13,7 +14,25 @@ import { platformsData } from '@/app/data/ui';
 import ProfileDetails from './ProfileDetails';
 import ImageUploader from './ImageUploader';
 
+
+interface ProfileData {
+    firstName: string;
+    lastName: string;
+    email: string;
+  }
+
+
 const LandingPage: React.FC = () => {
+
+  const router =  useRouter()
+
+  const [profileData, setProfileData] = useState<ProfileData>({
+    firstName: '',
+    lastName: '',
+    email: ''
+  });
+
+  
 
     const [imageUrl, setImageUrl] = useState<string | null>(null);
 
@@ -75,6 +94,10 @@ const LandingPage: React.FC = () => {
         setViewProfile(prev => !prev)
     }
 
+    const handleProfileUpdate = (newProfileData: ProfileData) => {
+        setProfileData(newProfileData);
+      };
+
     return (
         <>
             <nav className="w-full flex justify-between items-center bg-white p-2 m-0">
@@ -97,13 +120,17 @@ const LandingPage: React.FC = () => {
                         <p className="font-instrument text-xs font-normal leading-12 text-custom-gray hover:text-custom-purple">Profile Details</p>
                     </div>
                 </div>
-                <div className="px-[27px] py-[11px] flex items-center justify-center gap-2 rounded-lg hover:bg-light-purple active:bg-light-purple text-custom-purple border font-bold transition-colors duration-200 cursor-pointer border-custom-purple">
-                    <p className="font-instrument text-xs font-normal leading-12">Preview</p>
-                </div>
+                <Link href='/landing/preview'>
+                    <div 
+                        className="px-[27px] py-[11px] flex items-center justify-center gap-2 rounded-lg hover:bg-light-purple active:bg-light-purple text-custom-purple border font-bold transition-colors duration-200 cursor-pointer border-custom-purple"
+                        >
+                        <p className="font-instrument text-xs font-normal leading-12">Preview</p>
+                    </div>
+                </Link>
             </nav>
 
-            <div className="flex flex-col md:flex-row w-full m-0">
-                <div className="w-full md:w-1/3 p-12 bg-white m-2 flex justify-center items-center">
+            <div className="flex w-full m-0">
+                <div className="w-[70%] p-16 bg-white m-2 flex-col items-center">
                     <div className="main_frame">
                     <div className="phone-frame">
                         <div className="notch"></div>
@@ -117,6 +144,10 @@ const LandingPage: React.FC = () => {
                                     objectFit="cover"
                                     />
                                 )}
+                            </div>
+                            <div className='flex flex-col items-center gap-2 p-6'>
+                                <p>{profileData.firstName} {profileData.lastName} </p>
+                                <p>{profileData.email}</p>
                             </div>
                             <div>
                                 {selectedPlatforms.map((platform, index) => {
@@ -134,7 +165,7 @@ const LandingPage: React.FC = () => {
                                                 className="block w-full mb-4"
                                             >
                                                 <div 
-                                                    className="flex items-center justify-between p-3 rounded-md w-full text-white"
+                                                    className="flex items-center justify-between p-3 rounded-md w-[237px] text-white"
                                                     style={{ backgroundColor: platformInfo.bg }}
                                                 >
                                                     <div className="flex items-center gap-2">
@@ -153,8 +184,13 @@ const LandingPage: React.FC = () => {
                     </div>
                 </div>
                 <div className='w-full bg-white m-2 p-6'>
-                    {viewProfile? (<ProfileDetails onImageUpload={handleImageUpload} />):(
-                        <div className="w-full md:w-2/3 bg-white m-2 p-6 relative">
+                    {viewProfile? (<ProfileDetails 
+                                    onProfileUpdate={handleProfileUpdate} 
+                                    onImageUpload={handleImageUpload} 
+                                    imageUrl={imageUrl}
+                                    initialProfileData={profileData}
+                                    />):(
+                        <div className="w-full bg-white m-2 p-6 relative">
                             <h2 className="font-instrument text-3xl font-bold leading-tight text-left text-gray-800 mb-4">
                                 Customize Your Links
                             </h2>

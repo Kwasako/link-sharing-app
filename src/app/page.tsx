@@ -2,32 +2,38 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Button } from "../components/ui/button";
 import { LoginForm } from "@/components/ui/loginForm";
-import LandingPage from "@/components/ui/LandingPage";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const auth = getAuth();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setLoading(true);
       if (currentUser) {
         setUser(currentUser);
         router.push("/landing");
       } else {
         setUser(null);
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, [auth, router]);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   if (user) {
-    return <LandingPage />;
+    // This will likely never render as we're redirecting in useEffect
+    return null;
   }
 
   return (
