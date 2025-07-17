@@ -68,30 +68,25 @@
   }
 }
 
-body{
+body {
   background: rgba(250, 250, 250, 1);
-  display: grid;
-
 }
 
-.loginForm_div{
-  background-color: white;
-  padding: 40px;
-  width: 476px;
-
-}
-.main_frame{
+/* Phone Frame Styles - Responsive */
+.main_frame {
   border: 1px solid #D9D9D9;
-  padding: 10px;
-  border-radius: 40px;
+  padding: 8px;
+  border-radius: 32px;
   background-color: white;
+  max-width: 280px;
+  margin: 0 auto;
 }
 
 .phone-frame {
-  width: auto;
-  height: auto;
+  width: 100%;
+  min-height: 500px;
   border: 1px solid #D9D9D9;
-  border-radius: 40px;
+  border-radius: 32px;
   position: relative;
   overflow: hidden;
   background-color: white;
@@ -102,34 +97,42 @@ body{
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 150px;
-  height: 25px;
+  width: 120px;
+  height: 20px;
   border: 1px solid #D9D9D9;
-  background-color:white;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
+  background-color: white;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
 }
 
 .content {
-  padding: 40px 20px;
+  padding: 32px 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.profile-circle {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: #f0f0f0;
-  margin-bottom: 20px;
-}
-
-.button {
-  width: 237px;
-  padding: 7px 14px;
-  margin-bottom: 10px;
-  background-color: #f0f0f0;
-  border-radius: 7px;
-  text-align: center;
+/* Responsive adjustments */
+@media (min-width: 640px) {
+  .main_frame {
+    padding: 10px;
+    border-radius: 40px;
+    max-width: 320px;
+  }
+  
+  .phone-frame {
+    border-radius: 40px;
+    min-height: 600px;
+  }
+  
+  .notch {
+    width: 150px;
+    height: 25px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+  
+  .content {
+    padding: 40px 20px;
+  }
 }

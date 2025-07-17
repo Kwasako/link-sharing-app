@@ -130,32 +130,31 @@ export default function SocialLinkForm({initialPlatform, initialUrl, onUpdate }:
   return (
     <div className="space-y-4">
       <div className="relative">
-        <p className="font-instrument text-sm font-normal leading-normal text-gray-600">Platform</p>
-
+        <label className="block text-sm text-gray-600 mb-2">Platform</label>
         <div 
-          className="w-full p-2 border rounded flex items-center justify-between cursor-pointer bg-white"
+          className="w-full p-3 border rounded-lg flex items-center justify-between cursor-pointer bg-white hover:border-custom-purple transition-colors"
           onClick={() => setIsOpen(!isOpen)}
         >
           <span className="flex items-center">
-            <currentPlatform.icon className="mr-2" />
-            {currentPlatform.label}
+            <currentPlatform.icon className="mr-2 text-gray-600" size={18} />
+            <span className="text-gray-800">{currentPlatform.label}</span>
           </span>
           {isOpen ? (
-            <FaChevronUp className="text-[#EFEBFF]" />
+            <FaChevronUp className="text-custom-purple" size={14} />
           ) : (
-            <FaChevronDown className="text-[#EFEBFF]" />
+            <FaChevronDown className="text-custom-purple" size={14} />
           )}
         </div>
         {isOpen && (
-          <ul className="absolute z-10 w-full mt-1 bg-white border rounded shadow-lg max-h-60 overflow-auto">
+          <ul className="absolute z-20 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-auto">
             {platformsData.map((platform) => (
               <li
                 key={platform.id}
-                className="p-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                className="p-3 hover:bg-gray-50 cursor-pointer flex items-center transition-colors border-b border-gray-100 last:border-b-0"
                 onClick={() => handlePlatformChange(platform)}
               >
-                <platform.icon className="mr-2" />
-                {platform.label}
+                <platform.icon className="mr-3 text-gray-600" size={18} />
+                <span className="text-gray-800">{platform.label}</span>
               </li>
             ))}
           </ul>
@@ -163,15 +162,18 @@ export default function SocialLinkForm({initialPlatform, initialUrl, onUpdate }:
       </div>
 
       <div className="relative">
-        <FaLink className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-        <input 
-          type="text" 
-          value={linkInput} 
-          onChange={handleLinkChange}
-          placeholder={`e.g. ${currentPlatform.placeholder}`}
-          className="w-full p-2 pl-10 border rounded"
-        />
-        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        <label className="block text-sm text-gray-600 mb-2">Link</label>
+        <div className="relative">
+          <FaLink className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+          <input 
+            type="text" 
+            value={linkInput} 
+            onChange={handleLinkChange}
+            placeholder={`e.g. ${currentPlatform.placeholder}`}
+            className="w-full p-3 pl-10 border rounded-lg focus:border-custom-purple focus:outline-none transition-colors"
+          />
+        </div>
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
       </div>
     </div>
   );

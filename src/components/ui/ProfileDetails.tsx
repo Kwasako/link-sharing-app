@@ -37,23 +37,31 @@ export default function ProfileDetails({ onImageUpload, onProfileUpdate, imageUr
   };
 
   return (
-    <div className="flex flex-col">
-      <h2 className="font-instrument text-3xl font-bold leading-tight text-left text-gray-800 mb-4">Profile Details</h2>
-      <p className="font-instrument text-sm font-normal leading-normal text-left text-gray-600 mb-6">
+    <div className="flex flex-col w-full">
+      <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">Profile Details</h2>
+      <p className="text-sm text-gray-600 mb-6">
         Add your details to create personal touch to your profile
       </p>
-      <div className="bg-light-gray w-full flex p-6 items-center justify-between gap-2">
-        <p className="font-instrument text-sm font-normal leading-normal text-left text-gray-600">
-          Profile picture
-        </p>
-        <ImageUploader onImageUpload={onImageUpload} initialImageUrl={imageUrl} />
-        <p className="text-center font-instrument text-xs font-normal leading-normal text-gray-600">
-          Image must be below 1024x1024px. Use PNG or JPEG format.
-        </p>
+      
+      {/* Profile Picture Section */}
+      <div className="bg-light-gray w-full rounded-lg p-4 sm:p-6 mb-4">
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <p className="text-sm text-gray-600 sm:w-32 flex-shrink-0">
+            Profile picture
+          </p>
+          <div className="flex-shrink-0">
+            <ImageUploader onImageUpload={onImageUpload} initialImageUrl={imageUrl} />
+          </div>
+          <p className="text-xs text-gray-600 text-center sm:text-left">
+            Image must be below 1024x1024px. Use PNG or JPEG format.
+          </p>
+        </div>
       </div>
-      <div className='bg-light-gray w-full p-6 m-4 ml-0 flex flex-col gap-2'>
-        <div className='flex items-center'>
-          <label className="font-instrument text-sm font-normal leading-normal text-gray-600 w-24 mr-2">First name*</label>
+      
+      {/* Form Fields */}
+      <div className='bg-light-gray w-full rounded-lg p-4 sm:p-6 space-y-4'>
+        <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
+          <label className="text-sm text-gray-600 sm:w-24 flex-shrink-0">First name*</label>
           <Input 
             name="firstName"
             value={profileData.firstName}
@@ -62,8 +70,8 @@ export default function ProfileDetails({ onImageUpload, onProfileUpdate, imageUr
             className="flex-grow"
           />
         </div>
-        <div className='flex items-center'>
-          <label className="font-instrument text-sm font-normal leading-normal text-gray-600 w-24 mr-2">Last name*</label>
+        <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
+          <label className="text-sm text-gray-600 sm:w-24 flex-shrink-0">Last name*</label>
           <Input 
             name="lastName"
             value={profileData.lastName}
@@ -72,8 +80,8 @@ export default function ProfileDetails({ onImageUpload, onProfileUpdate, imageUr
             className="flex-grow"
           />
         </div>
-        <div className='flex items-center'>
-          <label className="font-instrument text-sm font-normal leading-normal text-gray-600 w-24 mr-2">email*</label>
+        <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
+          <label className="text-sm text-gray-600 sm:w-24 flex-shrink-0">Email*</label>
           <Input 
             name="email"
             value={profileData.email}

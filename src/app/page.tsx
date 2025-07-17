@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { LoginForm } from "@/components/ui/loginForm";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { onAuthStateChanged, User } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { auth } from "@/app/data/firebase";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const auth = getAuth();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -37,14 +37,14 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between"> 
-      <div className="flex items-center justify-between gap-5 mb-10">
-        <Image src='/solar_link-circle-bold.png' alt='solar link circle' width={40} height={40}/>
-        <Image src='/devlinks.svg' alt='solar link circle' width={135} height={26.25}/>
+    <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4"> 
+      <div className="flex items-center gap-3 mb-8">
+        <Image src='/solar_link-circle-bold.png' alt='DevLinks logo' width={32} height={32} className="sm:w-10 sm:h-10"/>
+        <Image src='/devlinks.svg' alt='DevLinks' width={108} height={21} className="sm:w-[135px] sm:h-[26px]"/>
       </div>
-      <div className="loginForm_div">
-        <h2 className="font-instrument text-32 font-bold leading-48 text-left text-dark-gray">Create account</h2>
-        <p className="font-instrument text-base font-normal leading-6 text-left text-custom-gray">Let's get you started sharing your links!</p>
+      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 sm:p-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Create account</h2>
+        <p className="text-gray-600 mb-6">Let's get you started sharing your links!</p>
         <LoginForm />
       </div>
     </main> 

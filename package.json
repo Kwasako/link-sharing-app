@@ -18,7 +18,7 @@
     "clsx": "^2.1.1",
     "firebase": "^10.12.4",
     "lucide-react": "^0.414.0",
-    "next": "14.2.5",
+    "next": "^14.2.30",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.52.1",

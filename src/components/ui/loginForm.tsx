@@ -22,6 +22,7 @@ import { Link } from "lucide-react";
 // Import Firebase
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { useToast } from './toast';
 
 const formSchema = z.object({
   email: z.string().email({
@@ -39,8 +40,10 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export function LoginForm() {
+  const { showToast } = useToast();
   const [isLogin, setIsLogin] = useState(false);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!auth) {
@@ -61,11 +64,12 @@ export function LoginForm() {
   })
 
   async function onSubmit(values: FormValues) {
+    setIsSubmitting(true);
     try {
       if (isLogin) {
         // Login
         await signInWithEmailAndPassword(auth, values.email, values.password);
-        console.log("User logged in successfully");
+        showToast("Welcome back! You've been logged in successfully.", "success");
       } else {
         // Register
         const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
@@ -75,12 +79,32 @@ export function LoginForm() {
         await setDoc(doc(db, "users", user.uid), {
           email: values.email,
           selectedPlatforms: selectedPlatforms,
+          createdAt: new Date().toISOString()
         });
         
-        console.log("User registered successfully");
+        showToast("Account created successfully! Welcome to DevLinks!", "success");
       }
     } catch (error) {
-      console.error("Error:", (error as Error).message);
+      const errorMessage = (error as Error).message;
+      let userFriendlyMessage = "An error occurred. Please try again.";
+      
+      // Provide user-friendly error messages
+      if (errorMessage.includes("user-not-found")) {
+        userFriendlyMessage = "No account found with this email address.";
+      } else if (errorMessage.includes("wrong-password")) {
+        userFriendlyMessage = "Incorrect password. Please try again.";
+      } else if (errorMessage.includes("email-already-in-use")) {
+        userFriendlyMessage = "An account with this email already exists.";
+      } else if (errorMessage.includes("weak-password")) {
+        userFriendlyMessage = "Password is too weak. Please choose a stronger password.";
+      } else if (errorMessage.includes("invalid-email")) {
+        userFriendlyMessage = "Please enter a valid email address.";
+      }
+      
+      showToast(userFriendlyMessage, "error");
+      console.error("Auth Error:", errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -131,10 +155,24 @@ export function LoginForm() {
         <FormDescription>
           Password must contain at least 8 characters
         </FormDescription>
-        <Button type="submit">{isLogin ? "Login" : "Register"}</Button>
-        <Button type="button" onClick={() => setIsLogin(!isLogin)}>
-          {isLogin ? "Need to create an account?" : "Already have an account?"}
+        <Button 
+          type="submit" 
+          disabled={isSubmitting}
+          className="w-full bg-dark-purple hover:bg-dark-purple text-white"
+        >
+          {isSubmitting ? (isLogin ? "Signing in..." : "Creating account...") : (isLogin ? "Login" : "Create account")}
         </Button>
+        <div className="text-center">
+          <Button 
+            type="button" 
+            variant="ghost" 
+            onClick={() => setIsLogin(!isLogin)}
+            disabled={isSubmitting}
+            className="text-dark-purple hover:text-dark-purple"
+          >
+            {isLogin ? "Don't have an account? Create one" : "Already have an account? Login"}
+          </Button>
+        </div>
       </form>
     </Form>
   )
